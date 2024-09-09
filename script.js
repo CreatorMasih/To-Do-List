@@ -5,18 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch tasks from the server
     async function fetchTasks() {
-        try {
-            const response = await fetch('https://todocentral.onrender.com/todos'); // Use the correct API endpoint
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const todos = await response.json();
-            todos.forEach(todo => {
-                addTaskToList(todo.task, todo._id, todo.completed, todo.createdAt, todo.completedAt);
-            });
-        } catch (error) {
-            console.error('Error fetching tasks:', error);
-        }
+        const response = await fetch('https://my-backend.onrender.com/todos');
+
+        const todos = await response.json();
+        todos.forEach(todo => {
+            addTaskToList(todo.task, todo._id, todo.completed, todo.createdAt, todo.completedAt);
+        });
     }
 
     fetchTasks(); // Fetch tasks on page load
@@ -27,23 +21,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const taskText = taskInput.value.trim();
         if (taskText === '') return;
 
-        try {
-            const response = await fetch('https://todocentral.onrender.com/todos', { // Correct API route
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ task: taskText })
-            });
+        const response = await fetch('http://localhost:5000/todos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: taskText })
+        });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const newTodo = await response.json();
-            addTaskToList(newTodo.task, newTodo._id, newTodo.completed, newTodo.createdAt, newTodo.completedAt);
-            taskInput.value = ''; // Clear input after adding task
-        } catch (error) {
-            console.error('Error adding task:', error);
-        }
+        const newTodo = await response.json();
+        addTaskToList(newTodo.task, newTodo._id, newTodo.completed, newTodo.createdAt, newTodo.completedAt);
+        taskInput.value = ''; // Clear input after adding task
     });
 
     // Function to create a new task item
@@ -84,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newTaskText = prompt('Edit your task:', taskSpan.textContent);
             if (newTaskText) {
                 taskSpan.textContent = newTaskText;
-                await fetch(`https://todocentral.onrender.com/todos/${id}`, { // Correct API route
+                await fetch(`http://localhost:5000/todos/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ task: newTaskText })
@@ -95,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteButton.addEventListener('click', async function() {
             if (confirm('Are you sure you want to delete this task?')) {
                 li.remove();
-                await fetch(`https://todocentral.onrender.com/todos/${id}`, { // Correct API route
+                await fetch(`http://localhost:5000/todos/${id}`, {
                     method: 'DELETE'
                 });
             }
@@ -105,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             taskSpan.classList.toggle('completed');
             const completed = taskSpan.classList.contains('completed');
             const completedAt = completed ? new Date().toISOString() : null;
-            await fetch(`https://todocentral.onrender.com/todos/${id}`, { // Correct API route
+            await fetch(`http://localhost:5000/todos/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ completed: completed, completedAt: completedAt })
