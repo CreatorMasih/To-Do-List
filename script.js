@@ -5,11 +5,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch tasks from the server
     async function fetchTasks() {
-        const response = await fetch('https://todocentral.onrender.com/todos'); // Correct API route
-        const todos = await response.json();
-        todos.forEach(todo => {
-            addTaskToList(todo.task, todo._id, todo.completed, todo.createdAt, todo.completedAt);
-        });
+        try {
+            const response = await fetch('https://todocentral.onrender.com/todos'); // Use the correct API endpoint
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const todos = await response.json();
+            todos.forEach(todo => {
+                addTaskToList(todo.task, todo._id, todo.completed, todo.createdAt, todo.completedAt);
+            });
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
     }
 
     fetchTasks(); // Fetch tasks on page load
@@ -20,15 +27,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const taskText = taskInput.value.trim();
         if (taskText === '') return;
 
-        const response = await fetch('https://todocentral.onrender.com/todos', { // Correct API route
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ task: taskText })
-        });
+        try {
+            const response = await fetch('https://todocentral.onrender.com/todos', { // Correct API route
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: taskText })
+            });
 
-        const newTodo = await response.json();
-        addTaskToList(newTodo.task, newTodo._id, newTodo.completed, newTodo.createdAt, newTodo.completedAt);
-        taskInput.value = ''; // Clear input after adding task
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const newTodo = await response.json();
+            addTaskToList(newTodo.task, newTodo._id, newTodo.completed, newTodo.createdAt, newTodo.completedAt);
+            taskInput.value = ''; // Clear input after adding task
+        } catch (error) {
+            console.error('Error adding task:', error);
+        }
     });
 
     // Function to create a new task item
