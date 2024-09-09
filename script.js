@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch tasks from the server
     async function fetchTasks() {
-        const response = await fetch('http://localhost:5000/todos');
+        const response = await fetch('https://your-backend.onrender.com/todos'); // Use your live backend URL
         const todos = await response.json();
         todos.forEach(todo => {
             addTaskToList(todo.task, todo._id, todo.completed, todo.createdAt, todo.completedAt);
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const taskText = taskInput.value.trim();
         if (taskText === '') return;
 
-        const response = await fetch('http://localhost:5000/todos', {
+        const response = await fetch('https://your-backend.onrender.com/todos', { // Use your live backend URL
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ task: taskText })
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newTaskText = prompt('Edit your task:', taskSpan.textContent);
             if (newTaskText) {
                 taskSpan.textContent = newTaskText;
-                await fetch(`http://localhost:5000/todos/${id}`, {
+                await fetch(`https://your-backend.onrender.com/todos/${id}`, { // Use your live backend URL
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ task: newTaskText })
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteButton.addEventListener('click', async function() {
             if (confirm('Are you sure you want to delete this task?')) {
                 li.remove();
-                await fetch(`http://localhost:5000/todos/${id}`, {
+                await fetch(`https://your-backend.onrender.com/todos/${id}`, { // Use your live backend URL
                     method: 'DELETE'
                 });
             }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             taskSpan.classList.toggle('completed');
             const completed = taskSpan.classList.contains('completed');
             const completedAt = completed ? new Date().toISOString() : null;
-            await fetch(`http://localhost:5000/todos/${id}`, {
+            await fetch(`https://your-backend.onrender.com/todos/${id}`, { // Use your live backend URL
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ completed: completed, completedAt: completedAt })
