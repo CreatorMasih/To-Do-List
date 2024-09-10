@@ -26,6 +26,7 @@ h1 {
     font-size: 24px;
     margin-bottom: 20px;
     text-shadow: 1px 1px 2px #aaa;
+    position : fixed;
 }
 
 form {
